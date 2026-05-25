@@ -100,7 +100,7 @@ async function main() {
   if (falta1) instalar('Proyecto 1 (Contratos)', ROOT);
   else log(VERDE, '[OK] Proyecto 1 ya instalado.');
 
-  if (falta2) instalar('Proyecto 2 (Coordinadores)', SISTEMA_DOCENTES, ['--ignore-scripts']);
+  if (falta2) instalar('Proyecto 2 (Coordinadores)', SISTEMA_DOCENTES);
   else log(VERDE, '[OK] Proyecto 2 ya instalado.');
 
   if (falta3) instalar('Proyecto 3 (Estudiantes)', SISTEMA_REPORTES);

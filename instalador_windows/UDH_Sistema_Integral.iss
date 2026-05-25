@@ -12,7 +12,7 @@ AppPublisher={#Publisher}
 AppContact={#Author}
 AppComments=Sistema Integral de Gestion Academica - Facultad de Ingenieria Mecatronica
 AppCopyright=Desarrollado por {#Author}
-DefaultDirName={autopf}\UDH\SISTEMA_MECA
+DefaultDirName={commonappdata}\UDH\SISTEMA_MECA
 DefaultGroupName={#AppName}
 DisableProgramGroupPage=yes
 OutputDir=dist
@@ -38,10 +38,28 @@ FinishedLabel=El asistente termino de configurar [name].%nl%%nl%Si selecciono Ho
 [Files]
 Source: "..\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Check: IsHostMode; Excludes: ".git\*,node_modules\*,SISTEMA_MECA\*,server\uploads\*,server\database.db,sistema_docentes\node_modules\*,sistema_docentes\database\*.db,sistema_reportes\node_modules\*,instalador_windows\dist\*,*.log"
 
+[Dirs]
+Name: "{app}"; Permissions: users-modify
+Name: "{app}\server\uploads"; Permissions: users-modify; Check: IsHostMode
+Name: "{app}\sistema_docentes\database"; Permissions: users-modify; Check: IsHostMode
+
 [Icons]
 Name: "{group}\Instalador Unificado UDH"; Filename: "{app}\instalador_tecnologia\Instalar_Sistema_Completo.bat"; WorkingDir: "{app}"; Check: IsHostMode
 Name: "{group}\Arrancar Sistema UDH"; Filename: "{cmd}"; Parameters: "/K node arrancar.js"; WorkingDir: "{app}"; Check: IsHostMode
 Name: "{group}\Ver IP del Servidor"; Filename: "{cmd}"; Parameters: "/K node ver_ip.js"; WorkingDir: "{app}"; Check: IsHostMode
+Name: "{commondesktop}\Iniciar Sistema UDH"; Filename: "{cmd}"; Parameters: "/K ""set PATH=%ProgramFiles%\nodejs;%PATH% && node arrancar.js"""; WorkingDir: "{app}"; Check: IsHostMode
+
+[UninstallDelete]
+Type: filesandordirs; Name: "{app}\node_modules"
+Type: filesandordirs; Name: "{app}\sistema_docentes\node_modules"
+Type: filesandordirs; Name: "{app}\sistema_reportes\node_modules"
+Type: filesandordirs; Name: "{app}\instalador_windows"
+Type: files; Name: "{commondesktop}\Iniciar Sistema UDH.lnk"
+Type: files; Name: "{userdesktop}\UDH - Dashboard Admin.url"
+Type: files; Name: "{userdesktop}\UDH - Portal Coordinadores.url"
+Type: files; Name: "{userdesktop}\UDH - Portal Estudiantil.url"
+Type: dirifempty; Name: "{app}"
+Type: dirifempty; Name: "{commonappdata}\UDH"
 
 [Code]
 var
