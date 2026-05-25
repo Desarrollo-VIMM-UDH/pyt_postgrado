@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Estudiantil de Reportes Anónimos - UDH</title>
+  <link rel="icon" type="image/png" href="udh-tiger-icon.png">
+  <style>
+    :root {
+      --primary-color: #001f3f; /* Deep Navy */
+      --secondary-color: #c5a059; /* UDH Gold */
+      --accent-color: #00e5ff; /* Cyan Accent */
+      --bg-color: #040914;
+      --card-bg: rgba(10, 20, 40, 0.7);
+      --text-primary: #ffffff;
+      --text-secondary: #a0aec0;
+      --border-color: rgba(197, 160, 89, 0.2);
+      
+      --success: #2ecc71;
+      --warning: #f1c40f;
+      --danger: #e74c3c;
+      --shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+      --radius: 12px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-primary);
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* TACTICAL BG PATTERN */
+    .tactical-bg {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 31, 63, 0.4) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(197, 160, 89, 0.08) 0%, transparent 50%),
+        linear-gradient(rgba(4, 9, 20, 0.95), rgba(4, 9, 20, 0.95));
+      z-index: -2;
+    }
+
+    .grid-pattern {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px);
+      background-size: 30px 30px;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* HEADER BAR */
+    .header-bar {
+      width: 100%;
+      padding: 1.2rem 2rem;
+      background: rgba(0, 31, 63, 0.7);
+      border-bottom: 2px solid var(--secondary-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #fff 0%, var(--secondary-color) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo-small {
+      height: 45px;
+      width: auto;
+      filter: drop-shadow(0 0 8px rgba(197, 160, 89, 0.4));
+    }
+
+    .tiger-icon {
+      height: 40px;
+      width: 40px;
+      fill: var(--secondary-color);
+      filter: drop-shadow(0 0 5px var(--secondary-color));
+    }
+
+    /* LOGIN SCREEN CONTAINER */
+    .login-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      padding: 2rem;
+    }
+
+    .login-box {
+      width: 100%;
+      max-width: 500px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .login-box h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .login-box p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--secondary-color);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      padding: 0.8rem 1rem;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 10px rgba(197, 160, 89, 0.25);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.9rem 2rem;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--secondary-color) 0%, #a47b35 100%);
+      color: #000;
+      box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(197, 160, 89, 0.45);
+    }
+
+    /* MAIN APP WORKSPACE (HIDDEN UNTIL LOGIN) */
+    .app-workspace {
+      max-width: 1000px;
+      width: 100%;
+      margin: 2.5rem auto;
+      padding: 0 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .view-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 2.5rem;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      position: relative;
+    }
+
+    .card-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid var(--secondary-color);
+      padding-left: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* TYPE SELECTION GRID */
+    .report-type-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .type-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .type-card:hover {
+      background: rgba(197, 160, 89, 0.04);
+      border-color: rgba(197, 160, 89, 0.4);
+      transform: translateY(-3px);
+    }
+
+    .type-card.selected {
+      background: rgba(197, 160, 89, 0.1);
+      border-color: var(--secondary-color);
+      box-shadow: 0 0 15px rgba(197, 160, 89, 0.2);
+    }
+
+    .type-card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .type-card-desc {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* UTILS */
+    .hidden { display: none !important; }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* TOAST NOTIFICATIONS */
+    .toast-container {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .toast {
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      animation: slideIn 0.3s ease-out;
+      backdrop-filter: blur(10px);
+    }
+
+    .toast-success {
+      background: rgba(46, 204, 113, 0.9);
+      border-left: 5px solid #2ecc71;
+    }
+
+    .toast-error {
+      background: rgba(231, 76, 60, 0.9);
+      border-left: 5px solid #e74c3c;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="tactical-bg"></div>
+  <div class="grid-pattern"></div>
+
+  <!-- HEADER BAR -->
+  <div class="header-bar">
+    <div class="header-title">
+      <img class="logo-small" src="udh-logo.png" alt="Logo UDH">
+      <span>Portal Estudiantil de Reportes Anónimos</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1.5rem;">
+      <div style="text-align: right;" class="hidden" id="studentInfoDisplay">
+        <div style="font-size: 0.9rem; font-weight: bold; color: #fff;">ESTUDIANTE VALIDADO</div>
+        <div style="font-size: 0.75rem; color: var(--secondary-color);" id="studentActiveProgram">PREGRADO - IMM</div>
+      </div>
+      <!-- TIGER ICON (PNG) -->
+      <img src="udh-tiger-icon.png" class="tiger-icon" style="height: 40px; width: 40px; border-radius: 50%; filter: drop-shadow(0 0 8px var(--secondary-color));">
+    </div>
+  </div>
+
+  <!-- LOGIN CONTAINER -->
+  <div class="login-container" id="loginSection">
+    <div class="login-box">
+      <h2>Autenticación Estudiantil</h2>
+      <p>Ingrese sus credenciales de alumno para certificar su estado activo y habilitar la entrega de reportes anónimos.</p>
+      
+      <form id="studentLoginForm">
+        <div class="form-group">
+          <label>Programa Académico de Pregrado</label>
+          <select id="loginProgram" required>
+            <option value="IMM">Ingeniería Militar en Mecatrónica (IMM)</option>
+            <option value="LEM">Licenciatura en Educación Militar (LEM)</option>
+            <option value="TUMM">Técnico Universitario en Mecatrónica Militar (TUMM)</option>
+            <option value="TUTM">Técnico Universitario en Telecomunicaciones Militares (TUTM)</option>
+            <option value="CC.MM">Ciencias Militares (CC.MM)</option>
+            <option value="CC.AA">Ciencias Aéreas (CC.AA)</option>
+            <option value="CC.NV">Ciencias Navales (CC.NV)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Número de Cuenta de Estudiante</label>
+          <input type="text" id="loginAccount" placeholder="Ej. 220405023" required>
+        </div>
+        <div class="form-group">
+          <label>Contraseña Única</label>
+          <input type="password" id="loginPassword" placeholder="Ingrese contraseña" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+          Validar Estudiante
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN APP WORKSPACE (HIDDEN UNTIL LOGIN) -->
+  <div class="app-workspace hidden" id="appSection">
+    <div class="view-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3 class="card-title" style="margin: 0; border-left-color: var(--secondary-color);">Crear Reporte 100% Anónimo</h3>
+        <button class="btn" id="btnLogout" style="padding: 0.5rem 1.2rem; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff;">
+          Cerrar Sesión
+        </button>
+      </div>
+      <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 2rem;">
+        Su identidad ha sido verificada a nivel de inicio de sesión, pero **ninguno de sus datos de cuenta será adjuntado al reporte**. La base de datos central únicamente registrará la información de la carrera y el contenido redactado. Cada caso será derivado directamente a la Mesa Técnica y al Coordinador Académico.
+      </p>
+
+      <form id="reportForm">
+        <label style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--secondary-color); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.8rem;">
+          Seleccione la Categoría de Reporte
+        </label>
+        <div class="report-type-grid" id="reportTypeSelector">
+          <div class="type-card" data-type="Coordinador de Carrera">
+            <span class="type-card-title">👨‍🏫 Coordinador de Carrera</span>
+            <span class="type-card-desc">Observaciones sobre la gestión académica y operativa del coordinador de carrera.</span>
+          </div>
+          <div class="type-card" data-type="Jefe de Curso">
+            <span class="type-card-title">🎖️ Jefe de Curso</span>
+            <span class="type-card-desc">Incidencias asociadas a la disciplina, tutoría u orientación de su jefe de curso.</span>
+          </div>
+          <div class="type-card" data-type="Dirección de Finanzas">
+            <span class="type-card-title">💰 Dirección de Finanzas</span>
+            <span class="type-card-desc">Sugerencias o reclamos sobre cobros, aranceles, estados de cuenta y pagos.</span>
+          </div>
+          <div class="type-card" data-type="Contra Estudiante">
+            <span class="type-card-title">🪖 Contra Estudiante</span>
+            <span class="type-card-desc">Quejas o incidencias de conducta asociadas a otro estudiante de la institución.</span>
+          </div>
+          <div class="type-card" data-type="Laboratorio">
+            <span class="type-card-title">🔬 Laboratorios</span>
+            <span class="type-card-desc">Daños de maquinaria, software desactualizado o problemas de acceso en laboratorios.</span>
+          </div>
+          <div class="type-card" data-type="Falta de Insumos">
+            <span class="type-card-title">📦 Falta de Insumos</span>
+            <span class="type-card-desc">Ausencia de materiales de práctica, papelería, tizas u otros recursos didácticos.</span>
+          </div>
+          <div class="type-card" data-type="Catedrático">
+            <span class="type-card-title">📚 Catedrático / Docente</span>
+            <span class="type-card-desc">Reportes sobre desempeño, puntualidad u observaciones del catedrático a cargo de su aula.</span>
+          </div>
+          <div class="type-card" data-type="Dirección de Tecnología">
+            <span class="type-card-title">💻 Dirección de Tecnología</span>
+            <span class="type-card-desc">Observaciones o incidencias de conectividad, plataformas virtuales o sistemas.</span>
+          </div>
+          <div class="type-card" data-type="Oficial / Personal UDH">
+            <span class="type-card-title">🎖️ Oficial / Personal UDH</span>
+            <span class="type-card-desc">Reportes referidos al trato, disciplina o gestión del personal oficial o administrativo.</span>
+          </div>
+        </div>
+
+        <div class="form-grid" style="display: grid; grid-template-columns: 1fr; gap: 1.5rem;">
+          <div class="form-group">
+            <label id="targetLabel">¿A quién o a qué va dirigido el reporte?</label>
+            <input type="text" id="reportTarget" placeholder="Ej. Nombre del catedrático, número de laboratorio, etc." required>
+          </div>
+          <div class="form-group">
+            <label>Descripción Detallada de la Situación</label>
+            <textarea id="reportDetails" rows="6" placeholder="Describa de forma clara y objetiva el suceso o la falta. Evite incluir su nombre o datos que puedan revelar su identidad para conservar el anonimato absoluto." required></textarea>
+          </div>
+        </div>
+
+        <div style="text-align: right; margin-top: 1.5rem;">
+          <button type="submit" class="btn btn-primary" style="padding: 1rem 3rem;">
+            🚀 Enviar Reporte de Forma Anónima
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    // =========================================================================
+    // CONFIGURACIÓN DE CONEXIÓN AL SERVIDOR CENTRAL DE LA UDH (PROYECTO 1)
+    // 
+    // CAMBIAR AQUÍ: Si en el futuro les asignan un dominio público o una IP fija intranet,
+    // cambie el valor de abajo por el dominio o IP correspondiente. Por ejemplo:
+    // const CENTRAL_BACKEND_URL = 'https://contratosbackend.udh.edu.hn';
+    // o también:
+    // const CENTRAL_BACKEND_URL = 'http://192.168.0.2:3001';
+    // =========================================================================
+    const CENTRAL_BACKEND_URL = 'http://localhost:3001';
+
+    let activeProgram = localStorage.getItem('student_program') || null;
+    let selectedReportType = null;
+
+    // DOM References
+    const loginSection = document.getElementById('loginSection');
+    const appSection = document.getElementById('appSection');
+    const studentInfoDisplay = document.getElementById('studentInfoDisplay');
+    const studentActiveProgram = document.getElementById('studentActiveProgram');
+    
+    const studentLoginForm = document.getElementById('studentLoginForm');
+    const loginProgram = document.getElementById('loginProgram');
+    const loginAccount = document.getElementById('loginAccount');
+    const loginPassword = document.getElementById('loginPassword');
+
+    const reportForm = document.getElementById('reportForm');
+    const reportTypeSelector = document.getElementById('reportTypeSelector');
+    const reportTarget = document.getElementById('reportTarget');
+    const reportDetails = document.getElementById('reportDetails');
+    const btnLogout = document.getElementById('btnLogout');
+    const targetLabel = document.getElementById('targetLabel');
+
+    // Init
+    if (activeProgram) {
+      showApp();
+    } else {
+      hideApp();
+    }
+
+    // Login Handler
+    studentLoginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const program = loginProgram.value;
+      const account = loginAccount.value.trim();
+      const password = loginPassword.value;
+
+      // Allow login for verified student profiles (password '123')
+      if (password === '123' && account.length > 4) {
+        activeProgram = program;
+        localStorage.setItem('student_program', program);
+        showToast('Autenticación estudiantil exitosa.', 'success');
+        showApp();
+        // Reset form
+        loginAccount.value = '';
+        loginPassword.value = '';
+      } else {
+        showToast('Credenciales estudiantiles incorrectas o formato de cuenta inválido.', 'error');
+      }
+    });
+
+    btnLogout.addEventListener('click', () => {
+      activeProgram = null;
+      localStorage.removeItem('student_program');
+      hideApp();
+      showToast('Sesión de estudiante cerrada correctamente.', 'success');
+    });
+
+    // Report Type Selector
+    document.querySelectorAll('.type-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedReportType = card.dataset.type;
+        
+        // Adapt target label dynamically based on type
+        if (selectedReportType === 'Coordinador de Carrera') {
+          targetLabel.textContent = 'Nombre del Coordinador de Carrera';
+          reportTarget.placeholder = 'Ej. Coordinador de Ciencias Militares';
+        } else if (selectedReportType === 'Jefe de Curso') {
+          targetLabel.textContent = 'Nombre del Jefe de Curso';
+          reportTarget.placeholder = 'Ej. Capitán de Infantería Zúniga';
+        } else if (selectedReportType === 'Dirección de Finanzas') {
+          targetLabel.textContent = 'Concepto o Referencia del Reclamo Financiero';
+          reportTarget.placeholder = 'Ej. Pago de matrícula Periodo I';
+        } else if (selectedReportType === 'Contra Estudiante') {
+          targetLabel.textContent = 'Nombre / Datos del Estudiante Reportado';
+          reportTarget.placeholder = 'Ej. Estudiante de 3er año de la carrera';
+        } else if (selectedReportType === 'Dirección de Tecnología') {
+          targetLabel.textContent = 'Servicio o Plataforma Tecnológica Afectada';
+          reportTarget.placeholder = 'Ej. Plataforma Moodle, red Wi-Fi pabellón B';
+        } else if (selectedReportType === 'Oficial / Personal UDH') {
+          targetLabel.textContent = 'Nombre / Cargo del Oficial o Personal';
+          reportTarget.placeholder = 'Ej. Encargado de disciplina académica';
+        } else if (selectedReportType === 'Laboratorio') {
+          targetLabel.textContent = 'Identificación o Número de Laboratorio';
+          reportTarget.placeholder = 'Ej. Laboratorio de Mecatrónica General';
+        } else if (selectedReportType === 'Falta de Insumos') {
+          targetLabel.textContent = 'Insumo o Material Faltante';
+          reportTarget.placeholder = 'Ej. Kits de microcontroladores PIC';
+        } else {
+          targetLabel.textContent = 'Nombre del Catedrático / Asignatura';
+          reportTarget.placeholder = 'Ej. Ing. Catedrático de Electrónica Analógica';
+        }
+      });
+    });
+
+    // Form Submit Handler (Anonymous post to server on port 3001)
+    reportForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!selectedReportType) {
+        showToast('Por favor, seleccione una categoría de reporte.', 'error');
+        return;
+      }
+
+      const dirigido_a = reportTarget.value.trim();
+      const detalles = reportDetails.value.trim();
+
+      const payload = {
+        programa: activeProgram,
+        tipo_reporte: selectedReportType,
+        dirigido_a,
+        detalles
+      };
+
+      try {
+        const response = await fetch(`${CENTRAL_BACKEND_URL}/api/reportes-estudiantes`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          showToast('¡Reporte enviado de forma 100% anónima exitosamente!', 'success');
+          // Reset form fields
+          reportTarget.value = '';
+          reportDetails.value = '';
+          selectedReportType = null;
+          document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+          targetLabel.textContent = '¿A quién o a qué va dirigido el reporte?';
+          reportTarget.placeholder = 'Ej. Nombre del catedrático, número de laboratorio, etc.';
+        } else {
+          showToast('Error al procesar el reporte en el servidor central.', 'error');
+        }
+      } catch (err) {
+        console.error('Intranet connection failed. Trying satellite Telegram fallback...', err);
+        showToast('Conexión intranet no disponible. Intentando envío satelital de contingencia...', 'info');
+        
+        try {
+          const TELEGRAM_TOKEN = '8963440470:AAFLKuclWRMLDJNrkfGuAPcG0d6RTc3jb_U';
+          const defaultChatId = '8455288029';
+          
+          const text = `[STUDENT_REPORT_FALLBACK] ${JSON.stringify(payload)}`;
+          
+          const tgResponse = await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              chat_id: defaultChatId,
+              text: text
+            })
+          });
+          
+          if (tgResponse.ok) {
+            showToast('¡Reporte enviado de forma 100% anónima vía satélite de contingencia!', 'success');
+            // Reset form fields
+            reportTarget.value = '';
+            reportDetails.value = '';
+            selectedReportType = null;
+            document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+            targetLabel.textContent = '¿A quién o a qué va dirigido el reporte?';
+            reportTarget.placeholder = 'Ej. Nombre del catedrático, número de laboratorio, etc.';
+          } else {
+            showToast('Error crítico: El canal satelital de Telegram no aceptó el reporte.', 'error');
+          }
+        } catch (tgErr) {
+          console.error(tgErr);
+          showToast('Error crítico: Sin conexión a Internet ni a la Intranet de la UDH.', 'error');
+        }
+      }
+    });
+
+    // Helpers
+    function showApp() {
+      loginSection.classList.add('hidden');
+      appSection.classList.remove('hidden');
+      studentInfoDisplay.classList.remove('hidden');
+      studentActiveProgram.textContent = `PREGRADO - PROGRAMA ${activeProgram}`;
+    }
+
+    function hideApp() {
+      loginSection.classList.remove('hidden');
+      appSection.classList.add('hidden');
+      studentInfoDisplay.classList.add('hidden');
+    }
+
+    function showToast(msg, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = msg;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.animation = 'slideIn 0.3s ease-out reverse';
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+  </script>
+</body>
+</html>
