@@ -42,7 +42,7 @@ Invoke-WebRequest -Uri $downloadUrl -OutFile $installerPath -UseBasicParsing
 Write-Host "[INFO] Instalando Node.js silenciosamente..."
 $process = Start-Process msiexec.exe -ArgumentList "/i `"$installerPath`" /qn /norestart" -Wait -PassThru
 
-if ($process.ExitCode -ne 0) {
+if ($process.ExitCode -notin @(0, 3010)) {
   throw "El instalador de Node.js fallo con codigo $($process.ExitCode)"
 }
 
