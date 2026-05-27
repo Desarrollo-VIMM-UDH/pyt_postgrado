@@ -2,6 +2,7 @@ import { spawnSync, spawn } from 'child_process';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
+import { createRequire } from 'module';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -33,6 +34,21 @@ function instalar(nombre, cwd, extraFlags = []) {
     process.exit(1);
   }
   log(VERDE, `[OK] ${nombre} instalado.`);
+}
+
+function tienePaquete(cwd, paquete) {
+  try {
+    const requireDesdeProyecto = createRequire(path.join(cwd, 'package.json'));
+    requireDesdeProyecto.resolve(paquete);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function proyectoListo(cwd, paquetes) {
+  if (!fs.existsSync(path.join(cwd, 'node_modules'))) return false;
+  return paquetes.every((paquete) => tienePaquete(cwd, paquete));
 }
 
 function crearCarpeta(ruta) {
@@ -93,9 +109,9 @@ async function main() {
   crearCarpeta(path.join(ROOT, 'server', 'uploads'));
   crearCarpeta(path.join(SISTEMA_DOCENTES, 'database'));
 
-  const falta1 = !fs.existsSync(path.join(ROOT, 'node_modules'));
-  const falta2 = !fs.existsSync(path.join(SISTEMA_DOCENTES, 'node_modules'));
-  const falta3 = !fs.existsSync(path.join(SISTEMA_REPORTES, 'node_modules'));
+  const falta1 = !proyectoListo(ROOT, ['express', 'vite']);
+  const falta2 = !proyectoListo(SISTEMA_DOCENTES, ['express', 'better-sqlite3']);
+  const falta3 = !proyectoListo(SISTEMA_REPORTES, ['express', 'cors']);
 
   if (falta1) instalar('Proyecto 1 (Contratos)', ROOT);
   else log(VERDE, '[OK] Proyecto 1 ya instalado.');

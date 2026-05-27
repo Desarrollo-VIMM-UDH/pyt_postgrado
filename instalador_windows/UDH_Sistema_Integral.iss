@@ -36,7 +36,7 @@ FinishedHeadingLabel=Instalacion finalizada
 FinishedLabel=El asistente termino de configurar [name].%nl%%nl%Si selecciono Host/Servidor, continue en la ventana de consola para instalar dependencias y configurar servicios.%nl%Si selecciono Cliente/Esclavo, revise los accesos directos creados en el Escritorio.
 
 [Files]
-Source: "..\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Check: IsHostMode; Excludes: ".git\*,node_modules\*,SISTEMA_MECA\*,server\uploads\*,server\database.db,sistema_docentes\node_modules\*,sistema_docentes\database\*.db,sistema_reportes\node_modules\*,instalador_windows\dist\*,*.log"
+Source: "..\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Check: IsHostMode; Excludes: ".git\*,node_modules\*,SISTEMA_MECA\*,server\uploads\*,server\*.db*,sistema_docentes\node_modules\*,sistema_docentes\database\*.db*,sistema_reportes\node_modules\*,instalador_windows\dist\*,*.log"
 
 [Dirs]
 Name: "{app}"; Permissions: users-modify
@@ -55,9 +55,9 @@ Type: filesandordirs; Name: "{app}\sistema_docentes\node_modules"
 Type: filesandordirs; Name: "{app}\sistema_reportes\node_modules"
 Type: filesandordirs; Name: "{app}\instalador_windows"
 Type: files; Name: "{commondesktop}\Iniciar Sistema UDH.lnk"
-Type: files; Name: "{userdesktop}\UDH - Dashboard Admin.url"
-Type: files; Name: "{userdesktop}\UDH - Portal Coordinadores.url"
-Type: files; Name: "{userdesktop}\UDH - Portal Estudiantil.url"
+Type: files; Name: "{commondesktop}\UDH - Dashboard Admin.url"
+Type: files; Name: "{commondesktop}\UDH - Portal Coordinadores.url"
+Type: files; Name: "{commondesktop}\UDH - Portal Estudiantil.url"
 Type: dirifempty; Name: "{app}"
 Type: dirifempty; Name: "{commonappdata}\UDH"
 
@@ -90,7 +90,9 @@ begin
       ResultCode
     ) and (ResultCode = 0)
   ) or FileExists(ExpandConstant('{pf}\nodejs\node.exe'))
-    or FileExists(ExpandConstant('{pf32}\nodejs\node.exe'));
+    or FileExists(ExpandConstant('{pf32}\nodejs\node.exe'))
+    or FileExists(ExpandConstant('{commonpf}\nodejs\node.exe'))
+    or FileExists(ExpandConstant('{commonpf32}\nodejs\node.exe'));
 end;
 
 procedure TryInstallNode();
@@ -130,7 +132,7 @@ end;
 procedure CreateUrlShortcut(FileName: String; Url: String);
 begin
   SaveStringToFile(
-    ExpandConstant('{userdesktop}\' + FileName + '.url'),
+    ExpandConstant('{commondesktop}\' + FileName + '.url'),
     '[InternetShortcut]' + #13#10 + 'URL=' + Url + #13#10,
     False
   );
