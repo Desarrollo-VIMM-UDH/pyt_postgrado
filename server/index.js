@@ -61,7 +61,7 @@ function telegramRequest(apiPath, method = 'GET', body = null) {
       headers: {
         'Content-Type': 'application/json'
       },
-      rejectUnauthorized: false
+      rejectUnauthorized: true
     };
 
     const req = https.request(options, (res) => {
